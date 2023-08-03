@@ -1,0 +1,128 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int                  @id @default(autoincrement())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now())
+  deletedAt          DateTime?
+  email              String               @unique @db.VarChar(100)
+  name               String               @db.VarChar(100)
+  userType           UserType             @default(CONTESTANT)
+  lastConclusion     DateTime?
+  userExercises      UserExercise[]
+  onlineJudgeProfile OnlineJudgeProfile[]
+}
+
+model UserExercise {
+  id           Int       @id @default(autoincrement())
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @default(now())
+  deletedAt    DateTime?
+  userId       Int
+  user         User      @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  exerciseId   Int
+  exercise     Exercise  @relation(fields: [exerciseId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  time         DateTime?
+  language     Language
+  submissionAt DateTime?
+}
+
+model Exercise {
+  id                 Int            @id @default(autoincrement())
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @default(now())
+  deletedAt          DateTime?
+  onlineJudgeApiId   Int
+  onlineJudgeApi     OnlineJudgeApi @relation(fields: [onlineJudgeApiId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  exerciseApiId      Int
+  name               String         @db.VarChar(100)
+  description        String?        @db.VarChar(4000)
+  level              Int?
+  category           Category?
+  succefull_attempts Int?           @default(0)
+  UserExercise       UserExercise[]
+}
+
+model OnlineJudgeApi {
+  id                 Int                  @id @default(autoincrement())
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @default(now())
+  deletedAt          DateTime?
+  name               String               @db.VarChar(100)
+  baseApiUrl         String               @unique @db.VarChar(100)
+  exercises          Exercise[]
+  onlineJudgeProfile OnlineJudgeProfile[]
+}
+
+model OnlineJudgeProfile {
+  id                Int            @id @default(autoincrement())
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @default(now())
+  deletedAt         DateTime?
+  userId            Int
+  user              User           @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  onlineJudgeApiId  Int
+  onlineJudgeApi    OnlineJudgeApi @relation(fields: [onlineJudgeApiId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  profileId         Int?
+  username          String?        @db.VarChar(100)
+  ranking           Int?
+  score             Int?
+  exercisesResolved Int?
+  exercisesTried    Int?
+  submissions       Int?
+  profileCreatedAt  Int?
+}
+
+enum UserType {
+  COACH
+  CONTESTANT
+}
+
+enum Language {
+  C
+  CPLUSPLUS
+  C99
+  CLOJURE
+  CSHARP
+  DART
+  ELIXIR
+  GO
+  HASKELL
+  JAVA
+  JAVASCRIPT
+  KOTLIN
+  LUA
+  OCAML
+  PASCAL
+  PHP
+  PORTUGOL
+  PROLOG
+  PYTHON
+  R
+  RUBY
+  RUST
+  SCALA
+  SQL
+  SWIFT
+  OTHERS
+}
+
+enum Category {
+  BEGINNER
+  ADHOC
+  STRINGS
+  STRUCTS
+  MATH
+  PARADIGMS
+  GRAPHS
+  COMPUTATIONALGEOMETRY
+  SQL
+  UNCATEGORIZED
+}

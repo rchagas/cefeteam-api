@@ -1,0 +1,18 @@
+version: '3.1'
+
+services:
+  mariadb:
+    image: mariadb
+    container_name: db-mariadb-cefeteam
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_ALLOW_EMPTY_ROOT_PASSWORD: 0
+      MARIADB_ROOT_PASSWORD: rootcefeteam
+      MARIADB_USER: cefeteam
+      MARIADB_PASSWORD: 123456
+      MARIADB_DATABASE: cefeteam
+    volumes:
+      - ../mariadb:/var/lib/mysql
+    restart: always
+

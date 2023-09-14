@@ -14,7 +14,11 @@ export class UsersService {
   async findAll(): Promise<User[]> {
     return this.prisma.user.findMany({
       include: {
-        userExercises: true,
+        userExercises: {
+          include: {
+            exercise: true,
+          }
+        }
       },
     });
   }
@@ -32,7 +36,11 @@ export class UsersService {
     return this.prisma.user.findFirst({
       where: { id },
       include: {
-        userExercises: true,
+        userExercises: {
+          include: {
+            exercise: true,
+          }
+        }
       },
     });
   }
